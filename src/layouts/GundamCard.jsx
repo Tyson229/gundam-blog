@@ -1,37 +1,54 @@
-import React from "react";
-// import { useState, useRef, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-export const GundamCard = ({ props, cardRef }) => {
-//   const [isIntersecting, setIsIntersecting] = useState(false);
-//   const ref = useRef(null);
+export const GundamCard = ({ props, rootParent }) => {
+  const cardRef = useRef(null);
+  const [isBackgroundChanged, setIsBackGroundChanged] = useState(false);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          //entry.target.classList.add("animate-fade-up");
+          rootParent.current.classList.add(props.background);
+        } else {
+          rootParent.current.classList.remove(props.background);
+        }
+        setIsBackGroundChanged((value) => (value = true));
+      },
+      {
+        root: rootParent.current,
+        threshold: 1,
+      }
+    );
 
-//   useEffect(() => {
-//     const observer = new IntersectionObserver(
-//       ([entry]) => {
-//         setIsIntersecting(entry.isIntersecting);
-//       },
-//       { rootMargin: "0px" }
-//     );
-//     observer.observe(ref.current);
-//     console.log(isIntersecting);
+    observer.observe(cardRef.current);
 
-//     return () => observer.disconnect();
-//   }, []);
-//   useEffect(() => {
-//     if(isIntersecting)
-//     console.log(true);
-//   }, [isIntersecting]);
+    return () => {
+      observer.unobserve(cardRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    cardRef.current.classList.add("animate-fade-up");
+    setIsBackGroundChanged((value) => (value = false));
+  }, [rootParent]);
 
   return (
     <div
-     ref={cardRef}
-      className={`card flex flex-col h-full justify-center items-center snap-always snap-center opacity-0 ${props.background}`}
+      id={props.name}
+      ref={cardRef}
+      className={`flex h-full justify-center items-center snap-start `}
     >
-      <div className="flex flex-col w-fit items-center border p-4">
-        <img src={props.image} width={600} />
-        <div>{props.name.toUpperCase()}</div>
-        <div>{props.modelNumber}</div>
-        <div className="w-1/2">{props.description}</div>
+      <div className="h-2/3 aspect-square flex justify-center items-center hover:shadow-2xl hover:-translate-y-1 transition-all duration-200 ease-linear">
+        <div className={`w-1/4 ${props.textColor} flex flex-col p-4 box-border bg-stone-900 h-full relative `}>
+          <div className="font-bold text-[4em] relative left-18 grow">{props.name.toUpperCase()}</div>
+          <div className="font-semibold text-[2em] ">{props.modelNumber}</div>
+          <div className="">{props.description}</div>
+        </div>
+
+        <img
+          src={props.image}
+          className="w-3/4 p-4 box-border"
+        />
       </div>
     </div>
   );
