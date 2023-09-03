@@ -1,5 +1,6 @@
 import React from "react";
-
+import { Link } from "react-scroll";
+import { GUNDAMS } from "../lib/data";
 export const Footer = () => {
   return (
     <footer className="flex w-full p-4 absolute bottom-0">
@@ -13,7 +14,18 @@ export const Footer = () => {
         <div className="underline font-bold">Terms & Conditions</div>
       </div>
       <div className="w-full"></div>
-      <div>Menu</div>
+      <ul className="w-full text-end">
+        {GUNDAMS.map((gundam,i) => {
+          return (
+            <li key={i}>
+              <Link activeClass="active complete" containerId={'container'} to={gundam.id} smooth={true} duration={100}>
+                {gundam.name.toLocaleUpperCase()}
+              </Link>
+              {/* <a href={`#${gundam.id}`}>{gundam.name.toUpperCase()}</a> */}
+            </li>
+          );
+        })}
+      </ul>
     </footer>
   );
 };
